@@ -1,0 +1,33 @@
+name: Autograde Notebooks
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          pip install nbgrader jupyter
+
+      - name: Run nbgrader autograde
+        run: |
+          nbgrader autograde problem1 --ConfigFile=nbgrader_config/nbgrader_config.py
+
+      - name: Upload Graded Notebooks
+        uses: actions/upload-artifact@v4
+        with:
+          name: graded-assignments
+          path: autograded/
