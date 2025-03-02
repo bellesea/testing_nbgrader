@@ -18,6 +18,9 @@ c.IncludeHeaderFooter.header = "source/header.ipynb"
 
 c = get_config()  #noqa
 
+
+c.Exchange.root = "/tmp/exchange"
+
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
 #------------------------------------------------------------------------------
