@@ -1,33 +1,36 @@
-name: Autograde Notebooks
+name: Auto-Grade Assignments
 
 on:
   pull_request:
-    branches:
-      - main
+    paths:
+      - "submitted/**/*.ipynb"  # Trigger only when a student submits a notebook
 
 jobs:
   grade:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Set Up Python
+      - name: 🏗 Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: "3.9"
 
-      - name: Install Dependencies
+      - name: 📦 Install dependencies
         run: |
-          pip install nbgrader jupyter
+          pip install -r requirements.txt
 
-      - name: Run nbgrader autograde
+      - name: 🔄 Change into course_id and run nbgrader
         run: |
-          nbgrader autograde problem1 --ConfigFile=nbgrader_config/nbgrader_config.py
+          cd course_id
+          nbgrader autograde "ps1" --force
 
-      - name: Upload Graded Notebooks
-        uses: actions/upload-artifact@v4
+      - name: 📝 Comment PR with Grade
+        uses: thollander/actions-comment-pull-request@v2
         with:
-          name: graded-assignments
-          path: autograded/
+          message: |
+            ✅ **Grading Complete!**
+            - Your assignment **ps1** has been graded.
+            - View feedback in `autograded/ps1.ipynb`
