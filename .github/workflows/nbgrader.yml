@@ -25,7 +25,7 @@ jobs:
       - name: 🔄 Change into course_id and run nbgrader
         run: |
           cd course_id
-          nbgrader autograde "ps1" --force
+          nbgrader autograde "ps3" --force
 
       - name: 📝 Comment PR with Grade
         uses: thollander/actions-comment-pull-request@v2
