@@ -43,7 +43,6 @@ jobs:
             - Your assignment **ps3** has been graded.
             
             **Scores:**
-            $(tail -n +2 course_id/grades.json | awk -F',' '{print "- **"$1"**: "$8" / "$10 }')
-           
+            $(cat course_id/grade_report.md)
           mode: upsert
           create_if_not_exists: true
