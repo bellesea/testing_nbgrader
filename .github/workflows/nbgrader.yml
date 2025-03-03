@@ -28,27 +28,22 @@ jobs:
           cd course_id
           nbgrader autograde "ps3" --force
 
-      - name: 📊 Extract Grade & Errors
+      - name: 📊 Extract Grade (CSV)
         run: |
           cd course_id
-          nbgrader export --to=grades.json --assignment="ps3"
-          jq '.' grades.json > grades_pretty.json  # Pretty-print for debugging
+          nbgrader export --assignment="ps3"
           echo "## Scores" > grade_report.md
-          jq -r '.students[0].score as $score | "**Total Score:** \($score)"' grades.json >> grade_report.md
-          echo "" >> grade_report.md
-          echo "## Errors" >> grade_report.md
-          jq -r '.students[0].notebooks[].cells[] | select(.success == false) | "- **Cell \(.cell_id):** \(.error_message)"' grades.json >> grade_report.md
+          csvcut -c student_id,raw_score,max_score grades.csv >> grade_report.md
 
-      - name: 📝 Comment PR with Grade & Errors
+      - name: 📝 Comment PR with Grade
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
             ✅ **Grading Complete!**
             - Your assignment **ps3** has been graded.
-            - **Total Score:** $(jq -r '.students[0].score' course_id/grades.json)
             
-            ## ❌ Errors:
-            $(jq -r '.students[0].notebooks[].cells[] | select(.success == false) | "- **Cell \(.cell_id):** \(.error_message)"' course_id/grades.json)
-
+            **Scores:**
+            $(tail -n +2 course_id/grades.json | awk -F',' '{print "- **"$1"**: "$8" / "$10 }')
+           
           mode: upsert
           create_if_not_exists: true

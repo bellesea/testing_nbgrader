@@ -1,3 +1,5 @@
 jupyter
 nbgrader
 pytest
+csvkit
+nbformat
