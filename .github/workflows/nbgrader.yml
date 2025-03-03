@@ -28,10 +28,27 @@ jobs:
           cd course_id
           nbgrader autograde "ps3" --force
 
-      - name: 📝 Comment PR with Grade
+      - name: 📊 Extract Grade & Errors
+        run: |
+          cd course_id
+          nbgrader export --to=json --assignment="ps1" --output=grades.json
+          jq '.' grades.json > grades_pretty.json  # Pretty-print for debugging
+          echo "## Scores" > grade_report.md
+          jq -r '.students[0].score as $score | "**Total Score:** \($score)"' grades.json >> grade_report.md
+          echo "" >> grade_report.md
+          echo "## Errors" >> grade_report.md
+          jq -r '.students[0].notebooks[].cells[] | select(.success == false) | "- **Cell \(.cell_id):** \(.error_message)"' grades.json >> grade_report.md
+
+      - name: 📝 Comment PR with Grade & Errors
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
             ✅ **Grading Complete!**
             - Your assignment **ps1** has been graded.
-            - View feedback in `autograded/ps1.ipynb`
+            - **Total Score:** $(jq -r '.students[0].score' course_id/grades.json)
+            
+            ## ❌ Errors:
+            $(jq -r '.students[0].notebooks[].cells[] | select(.success == false) | "- **Cell \(.cell_id):** \(.error_message)"' course_id/grades.json)
+
+          mode: upsert
+          create_if_not_exists: true
