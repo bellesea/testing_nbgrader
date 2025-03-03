@@ -2,10 +2,6 @@ name: Auto-Grade Assignments
 
 on:
   pull_request:
-  workflow_run:
-      workflows: ["Auto-Grade Assignments"]  
-      types:
-        - completed
 
 permissions:
   pull-requests: write
