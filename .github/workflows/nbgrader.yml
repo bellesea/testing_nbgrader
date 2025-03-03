@@ -31,7 +31,7 @@ jobs:
       - name: 📊 Extract Grade & Errors
         run: |
           cd course_id
-          nbgrader export --to=json --assignment="ps1" --output=grades.json
+          nbgrader export --to=json --assignment="ps3" --output=grades.json
           jq '.' grades.json > grades_pretty.json  # Pretty-print for debugging
           echo "## Scores" > grade_report.md
           jq -r '.students[0].score as $score | "**Total Score:** \($score)"' grades.json >> grade_report.md
@@ -44,7 +44,7 @@ jobs:
         with:
           message: |
             ✅ **Grading Complete!**
-            - Your assignment **ps1** has been graded.
+            - Your assignment **ps3** has been graded.
             - **Total Score:** $(jq -r '.students[0].score' course_id/grades.json)
             
             ## ❌ Errors:
