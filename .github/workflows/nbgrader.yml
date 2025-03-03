@@ -2,8 +2,6 @@ name: Auto-Grade Assignments
 
 on:
   pull_request:
-    paths:
-      - "submitted/**/*.ipynb"  # Trigger only when a student submits a notebook
 
 jobs:
   grade:
