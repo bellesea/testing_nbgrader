@@ -35,6 +35,13 @@ jobs:
           echo "## Scores" > grade_report.md
           csvcut -c student_id,raw_score,max_score grades.csv >> grade_report.md
 
+      - name: 📝 Read Grade Report into ENV Variable
+        id: read_report
+        run: |
+          echo "GRADE_REPORT<<EOF" >> $GITHUB_ENV
+          cat course_id/grade_report.md >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       - name: 📝 Comment PR with Grade
         uses: thollander/actions-comment-pull-request@v2
         with:
@@ -42,7 +49,6 @@ jobs:
             ✅ **Grading Complete!**
             - Your assignment **ps3** has been graded.
             
-            **Scores:**
-            $(cat course_id/grade_report.md)
+            ${{ env.GRADE_REPORT }}
           mode: upsert
           create_if_not_exists: true
